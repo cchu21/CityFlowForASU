@@ -69,6 +69,22 @@ if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
 endif()
 
 pybind11_add_module(${PROJECT_NAME} MODULE src/cityflow.cpp)
+
+#specify Libtorch path 
+
+set(LIBTORCH_ROOT "./src/libtorch")
+include_directories(${LIBTORCH_ROOT}/include/torch/csrc/api/include)
+link_directories(${LIBTORCH_ROOT}/lib)
+
+#CMake configuration for Libtorch
+set(Torch_DIR "./src/libtorch/share/cmake/Torch")
+find_package(Torch REQUIRED)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ${TORCH_LIBRARIES})
+
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_LIB_NAME})
 if(VERSION)
     target_compile_definitions(${PROJECT_NAME} PRIVATE -DVERSION=${VERSION})
