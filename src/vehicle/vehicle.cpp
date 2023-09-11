@@ -5,6 +5,8 @@
 #include <limits>
 #include <random>
 
+#include <torch/torch.h>
+
 namespace CityFlow {
 
     Vehicle::ControllerInfo::ControllerInfo(Vehicle *vehicle, std::shared_ptr<const Route> route, std::mt19937 *rnd)
@@ -211,7 +213,7 @@ namespace CityFlow {
     // should be move to seperate CarFollowing (Controller?) class later?
     double Vehicle::getCarFollowSpeed(double interval) {
         Vehicle *leader = getLeader();
-        if (leader == nullptr) return hasSetCustomSpeed() ? buffer.customSpeed : vehicleInfo.maxSpeed;
+        /*if (leader == nullptr) return hasSetCustomSpeed() ? buffer.customSpeed : vehicleInfo.maxSpeed;
 
         // collision free
         double v = getNoCollisionSpeed(leader->getSpeed(), leader->getMaxNegAcc(), vehicleInfo.speed,
@@ -234,7 +236,17 @@ namespace CityFlow {
                        (controllerInfo.gap + (leaderSpeed + assumeDecel / 2) * interval -
                         vehicleInfo.speed * interval / 2) / (vehicleInfo.headwayTime + interval / 2));
 
-        return v;
+        return v;*/
+        torch::Tensor input = torch::tensor ({leader->getSpeed(), leader->getMaxNegAcc(),
+                                                vehicleInfo.speed, vehicleInfo.maxNegAcc,
+                                                interval, controllerInfo.gap, leader->getUsualNegAcc(),
+                                                vehicleInfo.usualNegAcc, vehicleInfo.minGap,
+                                                vehicleInfo.headwayTime});
+        
+        torch::jit::script::Module module;
+        module = torch::jit::load("model_script.pt");
+        torch::Tensor output = module.forward(input).toTensor();
+        return output[0].item<double>();
     }
 
     double Vehicle::getStopBeforeSpeed(double distance, double interval) const {

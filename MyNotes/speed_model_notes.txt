@@ -1,0 +1,36 @@
+
+getNoCollisionSpeed
+
+
+Preditc the speed of the car: 
+
+                                                                Python API: get_vehicles(include_waiting=False)
+
+                                        Vehicle *leader = getLeader();
+No collision speed:
+1.Front vehicle speed                C++: leader->getSpeed()      Python API: get_leader(vehicle_id), get_vehicle_info(vehicle_id)
+2.Front vehicle max dcceleration     C++: leader->getMaxNegAcc()  Python API: No API. The default value is 4.5
+3.target vehicle's own speed         C++: vehicleInfo.speed       Python API: get_vehicle_speed() or get_vehicle_info(vehicle_id)
+4.target vehicle's max deceleration  C++: vehicleInfo.maxNegAcc   Python API: No API, The default value is 4.5
+5.interval between cars in the traffic flow   C++: interval       Python API: No API, The default value is 1.0
+6.gap between target vehicle and front vehicle  C++: controlInfo.gap  Python API: No Api, let's just use 2.5 for now
+7.front vehicle's usual deceleration     C++: leader->getUsualNegAcc() Python API: No API, The default value is 2.5
+8.target vehicle's usual deceleartion    C++: vehicleInfo.usualNegAcc   Python API: No API, The default value is 2.5    
+9.minimum gap allowed between target vehicle and front vehicle     C++:vehicleInfo.minGap   Python API: The default is 2.5
+10.target vehicle's headway time    C++: vehicleInfo.headwayTime    The defualt value is 1.5
+
+
+
+
+
+
+
+
+
+
+
+
+
+Before stop speed:
+7.Distance that has traveled on the road
+8.Interval between vehicles in the traffic flow
